@@ -238,53 +238,57 @@ body::after {
     </a>
   </footer>
 
-  <script>
-    <script>
-    Kakao.init('37ea916b7f1ab457b58119c60ec4052a');
-    const totalImages = 6;
-    const imageOrder = Array.from({ length: totalImages }, (_, i) => i + 1);
-    let currentIndex = 0, currentVisible = 0;
-    const images = [document.getElementById('img1'), document.getElementById('img2')];
-    const progressBar = document.getElementById('progress-bar');
-    const progressText = document.getElementById('progress-text');
+<script>
+  Kakao.init('37ea916b7f1ab457b58119c60ec4052a');
+  const totalImages = 6;
+  const imageOrder = Array.from({ length: totalImages }, (_, i) => i + 1);
+  const params = new URLSearchParams(window.location.search);
+  const startImg = parseInt(params.get('img') || '1', 10);
+  let currentIndex = Math.max(0, Math.min(startImg - 1, totalImages - 1));
+  let currentVisible = 0;
 
-    function showImage() {
-      const num = imageOrder[currentIndex];
-      const next = 1 - currentVisible;
-      const curr = images[currentVisible], nextImg = images[next];
-      nextImg.src = `images/${num}.jpg`;
-      nextImg.onload = () => {
-        nextImg.classList.add('active');
-        curr.classList.remove('active');
-        currentVisible = next;
-      };
-      document.getElementById('prev-btn').disabled = currentIndex === 0;
-      document.getElementById('next-btn').disabled = currentIndex === totalImages - 1;
-      const seen = currentIndex + 1;
-      progressBar.style.width = (seen / totalImages * 100) + '%';
-      progressText.textContent = `총 ${totalImages}개 중 ${seen}번째`;
-    }
+  const images = [document.getElementById('img1'), document.getElementById('img2')];
+  const progressBar = document.getElementById('progress-bar');
+  const progressText = document.getElementById('progress-text');
 
-    document.getElementById('prev-btn').onclick = () => { if (currentIndex>0) currentIndex--, showImage() };
-    document.getElementById('next-btn').onclick = () => { if (currentIndex<totalImages-1) currentIndex++, showImage() };
+  function showImage() {
+    const num = imageOrder[currentIndex];
+    const next = 1 - currentVisible;
+    const curr = images[currentVisible], nextImg = images[next];
+    nextImg.src = `images/${num}.jpg`;
+    nextImg.onload = () => {
+      nextImg.classList.add('active');
+      curr.classList.remove('active');
+      currentVisible = next;
+    };
+    document.getElementById('prev-btn').disabled = currentIndex === 0;
+    document.getElementById('next-btn').disabled = currentIndex === totalImages - 1;
+    const seen = currentIndex + 1;
+    progressBar.style.width = (seen / totalImages * 100) + '%';
+    progressText.textContent = `총 ${totalImages}개 중 ${seen}번째`;
+  }
 
-    function shareToKakao() {
-      const num = imageOrder[currentIndex];
-      const shareUrl = `https://bluenew.life/sevenvisions/share/${num}.html`;
-      const imageUrl = `https://bluenew.life/sevenvisions/images/${num}.jpg`;
-      Kakao.Link.sendDefault({
-        objectType: 'feed',
-        content: {
-          title: '이재명의 비전입니다!',
-          description: '일곱가지 비전!',
-          imageUrl,
-          link: { mobileWebUrl: shareUrl, webUrl: shareUrl }
-        }
-      });
-    }
+  document.getElementById('prev-btn').onclick = () => { if (currentIndex>0) currentIndex--, showImage() };
+  document.getElementById('next-btn').onclick = () => { if (currentIndex<totalImages-1) currentIndex++, showImage() };
 
-    // 초기 표시
-    showImage();
-  </script>
+  function shareToKakao() {
+    const num = imageOrder[currentIndex];
+    const shareUrl = `https://bluenew.life/sevenvisions/share/${num}.html`;
+    const imageUrl = `https://bluenew.life/sevenvisions/images/${num}.jpg`;
+    Kakao.Link.sendDefault({
+      objectType: 'feed',
+      content: {
+        title: '이재명의 비전입니다!',
+        description: '일곱가지 비전!',
+        imageUrl,
+        link: { mobileWebUrl: shareUrl, webUrl: shareUrl }
+      }
+    });
+  }
+
+  // 초기 표시
+  showImage();
+</script>
+
 </body>
 </html>
